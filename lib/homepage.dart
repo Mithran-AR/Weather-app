@@ -11,46 +11,107 @@ class Homepage extends StatefulWidget {
   State<Homepage> createState() => _HomepageState();
 }
 
-
 class _HomepageState extends State<Homepage> {
-
-  final wetherCntrl=Get.put(Weathercontroler());
+  final weatherCtrl = Get.put(Weathercontroler());
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    wetherCntrl.getdata(wetherCntrl.selectdistrict.value);
+    weatherCtrl.getdata(weatherCtrl.selectdistrict.value);
+  }
+
+  Widget buildWeatherInfo(String label, String value, IconData icon) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.blueAccent, Colors.purpleAccent],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.5),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            Icon(
+              icon,
+              color: Colors.white,
+              size: 32,
+            ),
+            const SizedBox(width: 16),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: const TextStyle(
+                    color: Colors.white70,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Text(
+                  value,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return
-    Scaffold(
+    return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
-        title: Text("Select District",style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),),
+        backgroundColor: Colors.black,
+        title: const Text(
+          "Weather Scope",
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 24,
+          ),
+        ),
         centerTitle: true,
       ),
-      body: Column(
-        children: [
-
-          Container(
-              decoration: BoxDecoration(
-                color: Color(0xffD5E1DD),
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                child: TextField(
-                  onChanged: (value) {
-                    wetherCntrl.selectdistrict.value=value;
-                    wetherCntrl.getdata(wetherCntrl.selectdistrict.value);
-                  },
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 15), // ScreenUtil applied here
-                  cursorColor: Colors.black,
-                  decoration: InputDecoration(
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  color: const Color(0xffD5E1DD),
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: TextField(
+                    onChanged: (value) {
+                      weatherCtrl.selectdistrict.value = value;
+                      weatherCtrl.getdata(weatherCtrl.selectdistrict.value);
+                    },
+                    style: const TextStyle(color: Colors.black, fontSize: 16),
+                    cursorColor: Colors.black,
+                    decoration: const InputDecoration(
                       hintText: 'Search',
                       hintStyle: TextStyle(
                         color: Colors.black54,
@@ -58,24 +119,28 @@ class _HomepageState extends State<Homepage> {
                         fontFamily: "Sen",
                       ),
                       border: InputBorder.none,
-                      contentPadding: EdgeInsets.symmetric(
-                          vertical: 14), // ScreenUtil applied here
+                      contentPadding: EdgeInsets.symmetric(vertical: 14),
                       prefixIcon: Icon(
                         Icons.search,
                         color: Color(0xff8A8A8A),
-                        size: 30, // ScreenUtil applied here
+                        size: 28,
                       ),
+                    ),
+                  ),
                 ),
-                ),
-              )),
-
-          Lottie.asset('assets/weather.json'),
-
-          Obx(()=> Text(wetherCntrl.name.toString())),
-          Obx(()=> Text("the wind speed is : ${wetherCntrl.windSpeed.toString()}")),
-          Obx(()=> Text("The SunSet : ${wetherCntrl.sunSet.toString()}")),
-          Obx(()=> Text("the SunRise : ${wetherCntrl.sunRise.toString()}")),
-        ],
+              ),
+              const SizedBox(height: 20),
+              Center(
+                child: Lottie.asset('assets/newani.json.json'),
+              ),
+              const SizedBox(height: 20),
+              Obx(() => buildWeatherInfo("City:", weatherCtrl.name.toString(), Icons.location_city)),
+              Obx(() => buildWeatherInfo("Wind Speed:", weatherCtrl.windSpeed.toString(), Icons.air)),
+              Obx(() => buildWeatherInfo("Sunset:", weatherCtrl.sunSet.toString(), Icons.wb_sunny_sharp)),
+              Obx(() => buildWeatherInfo("Sunrise:", weatherCtrl.sunRise.toString(), Icons.wb_sunny)),
+            ],
+          ),
+        ),
       ),
     );
   }
